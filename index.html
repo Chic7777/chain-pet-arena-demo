@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chain Pet Arena - 模拟链游 Demo</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-shell">
+        <header class="topbar">
+            <div class="brand">
+                <span class="brand-mark">🐾</span>
+                <div>
+                    <h1>Chain Pet Arena</h1>
+                    <p class="subtitle">模拟链游宠物竞技场</p>
+                </div>
+            </div>
+
+            <div class="wallet-dock">
+                <div class="wallet-status">
+                    <span class="status-dot"></span>
+                    <span id="walletStatus" class="status-value disconnected">未连接</span>
+                </div>
+                <button id="connectBtn" class="btn wallet-connect">连接模拟钱包</button>
+                <div class="wallet-detail" id="walletDetail" style="display: none;">
+                    <div class="wallet-line">
+                        <span>地址</span>
+                        <strong id="walletAddress">-</strong>
+                    </div>
+                    <div class="wallet-line">
+                        <span>网络</span>
+                        <strong id="walletNetwork">-</strong>
+                    </div>
+                    <div class="wallet-line">
+                        <span>PET</span>
+                        <strong id="walletBalance">0</strong>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="notice">
+            <span>模拟链游 Demo</span>
+            不连接真实钱包，不发生真实交易，所有数据均为模拟数据。
+        </div>
+
+        <main class="arena-layout">
+            <aside class="stats-panel panel">
+                <div class="panel-heading">
+                    <span>📊</span>
+                    <h2>宠物属性</h2>
+                </div>
+                <div class="stat-grid">
+                    <div class="stat-chip">
+                        <span>等级</span>
+                        <strong id="petLevel">-</strong>
+                    </div>
+                    <div class="stat-chip">
+                        <span>经验</span>
+                        <strong id="petExp">-</strong>
+                    </div>
+                    <div class="stat-chip">
+                        <span>攻击</span>
+                        <strong id="petAttack">-</strong>
+                    </div>
+                    <div class="stat-chip">
+                        <span>防御</span>
+                        <strong id="petDefense">-</strong>
+                    </div>
+                </div>
+                <div class="exp-wrap">
+                    <span>升级进度</span>
+                    <div class="exp-bar">
+                        <div id="expProgress" class="exp-progress"></div>
+                    </div>
+                </div>
+            </aside>
+
+            <section class="arena-stage" aria-label="宠物 NFT 舞台">
+                <div class="stage-ring"></div>
+                <div class="stage-platform">
+                    <div id="noPetMsg" class="no-pet-msg">
+                        <div class="egg-shell">🥚</div>
+                        <strong>等待铸造宠物 NFT</strong>
+                        <span>先连接模拟钱包，再唤醒你的链上伙伴</span>
+                    </div>
+
+                    <div id="petCard" class="pet-card hidden">
+                        <div class="pet-aura"></div>
+                        <div class="pet-avatar" aria-hidden="true">
+                            <span id="petEmoji" class="pet-emoji">🐾</span>
+                        </div>
+                        <div class="pet-header">
+                            <h2 id="petName" class="pet-name">-</h2>
+                            <span id="petRarity" class="pet-rarity">-</span>
+                        </div>
+                        <div class="token-card">
+                            <span>NFT Token</span>
+                            <strong id="petTokenId">-</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="action-orbit" aria-label="宠物操作">
+                    <button id="mintBtn" class="btn action-bubble bubble-mint" disabled>
+                        <span>✨</span>
+                        铸造
+                    </button>
+                    <button id="trainBtn" class="btn action-bubble bubble-train" disabled>
+                        <span>🍬</span>
+                        训练
+                    </button>
+                    <button id="battleBtn" class="btn action-bubble bubble-battle" disabled>
+                        <span>⚔️</span>
+                        战斗
+                    </button>
+                </div>
+            </section>
+
+            <aside class="logs-panel panel">
+                <div class="panel-heading">
+                    <span>📜</span>
+                    <h2>链上冒险记录</h2>
+                </div>
+                <div id="logsList" class="logs-list">
+                    <div class="log-item log-info">
+                        <span class="log-time">[系统]</span>
+                        <span class="log-type">[INFO]</span>
+                        <span class="log-content">欢迎来到 Chain Pet Arena，请连接模拟钱包开始游戏。</span>
+                    </div>
+                </div>
+            </aside>
+        </main>
+
+        <div id="walletModal" class="wallet-modal" aria-hidden="true">
+            <div class="wallet-modal-backdrop" data-wallet-close></div>
+            <section class="wallet-dialog" role="dialog" aria-modal="true" aria-labelledby="walletModalTitle">
+                <button id="walletModalClose" class="modal-close" type="button" aria-label="关闭连接钱包弹窗">×</button>
+                <div class="wallet-dialog-header">
+                    <span class="wallet-dialog-icon">🪄</span>
+                    <div>
+                        <p class="eyebrow">模拟连接</p>
+                        <h2 id="walletModalTitle">选择你的钱包</h2>
+                    </div>
+                </div>
+                <p class="wallet-dialog-copy">
+                    像真实 DApp 一样选择钱包入口，但这里只会生成教学用的模拟地址。
+                </p>
+                <div class="wallet-options" aria-label="模拟钱包选项">
+                    <button class="wallet-option" type="button" data-wallet-name="Mock MetaMask">
+                        <span class="wallet-option-icon">🦊</span>
+                        <span>
+                            <strong>Mock MetaMask</strong>
+                            <small>模拟浏览器钱包体验</small>
+                        </span>
+                        <em>推荐</em>
+                    </button>
+                    <button class="wallet-option" type="button" data-wallet-name="Mock WalletConnect">
+                        <span class="wallet-option-icon">🔗</span>
+                        <span>
+                            <strong>Mock WalletConnect</strong>
+                            <small>模拟扫码连接移动钱包</small>
+                        </span>
+                    </button>
+                    <button class="wallet-option" type="button" data-wallet-name="Local Demo Wallet">
+                        <span class="wallet-option-icon">🎮</span>
+                        <span>
+                            <strong>Local Demo Wallet</strong>
+                            <small>本地链游演示钱包</small>
+                        </span>
+                    </button>
+                </div>
+                <div class="wallet-safety">
+                    <strong>安全边界</strong>
+                    <span>不会打开真实钱包、不会请求签名、不会发送交易，所有资产都是模拟数据。</span>
+                </div>
+            </section>
+        </div>    </div>
+
+    <script src="game.js"></script>
+</body>
+</html>
